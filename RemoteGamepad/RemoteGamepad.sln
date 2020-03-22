@@ -5,25 +5,63 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteGamepadClient", "RemoteGamepadClient\RemoteGamepadClient.vcxproj", "{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}"
 	ProjectSection(ProjectDependencies) = postProject
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453} = {BFFDF992-334B-4024-A7A1-6CB1F6A75453}
 		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9} = {33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ViGEmCLient", "ViGEmCLient\ViGEmCLient.vcxproj", "{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteGamepadServer", "RemoteGamepadServer\RemoteGamepadServer.vcxproj", "{20145FDB-DCA5-4C4F-829D-3A9497686FBC}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453} = {BFFDF992-334B-4024-A7A1-6CB1F6A75453}
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9} = {33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RemoteGamepadCommon", "RemoteGamepadCommon\RemoteGamepadCommon.vcxproj", "{BFFDF992-334B-4024-A7A1-6CB1F6A75453}"
+	ProjectSection(ProjectDependencies) = postProject
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9} = {33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Debug|x64.ActiveCfg = Debug|x64
 		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Debug|x64.Build.0 = Debug|x64
+		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Debug|x86.ActiveCfg = Debug|Win32
+		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Debug|x86.Build.0 = Debug|Win32
 		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Release|x64.ActiveCfg = Debug|x64
 		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Release|x64.Build.0 = Debug|x64
+		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Release|x86.ActiveCfg = Release|Win32
+		{540DE422-1A7E-47CF-8F4F-1FE8ABBB2D8A}.Release|x86.Build.0 = Release|Win32
 		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Debug|x64.ActiveCfg = Debug|x64
 		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Debug|x64.Build.0 = Debug|x64
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Debug|x86.ActiveCfg = Debug|Win32
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Debug|x86.Build.0 = Debug|Win32
 		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Release|x64.ActiveCfg = Debug|x64
 		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Release|x64.Build.0 = Debug|x64
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Release|x86.ActiveCfg = Release|Win32
+		{33F743B0-E4E8-4B68-94C8-F0C8E588F9A9}.Release|x86.Build.0 = Release|Win32
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Debug|x64.ActiveCfg = Debug|x64
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Debug|x64.Build.0 = Debug|x64
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Debug|x86.ActiveCfg = Debug|Win32
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Debug|x86.Build.0 = Debug|Win32
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Release|x64.ActiveCfg = Release|x64
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Release|x64.Build.0 = Release|x64
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Release|x86.ActiveCfg = Release|Win32
+		{20145FDB-DCA5-4C4F-829D-3A9497686FBC}.Release|x86.Build.0 = Release|Win32
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Debug|x64.ActiveCfg = Debug|x64
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Debug|x64.Build.0 = Debug|x64
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Debug|x86.ActiveCfg = Debug|Win32
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Debug|x86.Build.0 = Debug|Win32
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Release|x64.ActiveCfg = Release|x64
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Release|x64.Build.0 = Release|x64
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Release|x86.ActiveCfg = Release|Win32
+		{BFFDF992-334B-4024-A7A1-6CB1F6A75453}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

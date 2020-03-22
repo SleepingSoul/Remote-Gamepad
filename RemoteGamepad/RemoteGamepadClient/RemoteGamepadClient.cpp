@@ -1,9 +1,11 @@
 #include "RemoteGamepadClient.h"
 #include <iostream>
 #include <optional>
-#include <sstream>
+
 #include <Windows.h>
-#include <Xinput.h>
+#include <XInput.h>
+
+#include <gamepad_state_serializer.h>
 
 namespace
 {
@@ -24,24 +26,6 @@ namespace
         }
 
         return std::nullopt;
-    }
-
-    std::string serializeGamepadState(const XINPUT_STATE& state)
-    {
-        static std::stringstream stream;
-        stream.str({});
-
-        const auto& gamepadState = state.Gamepad;
-
-#ifdef _DEBUG
-        // Write data in human-readable format.
-        stream << gamepadState.bLeftTrigger << gamepadState.bRightTrigger << gamepadState.sThumbLX << gamepadState.sThumbLY
-            << gamepadState.sThumbRX << gamepadState.sThumbRY << gamepadState.wButtons;
-#else
-#error Not implemented
-#endif
-
-        return stream.str();
     }
 }
 
@@ -71,7 +55,7 @@ RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned 
     }
     catch (const boost::system::system_error& error)
     {
-        std::cerr << "Connection unsuccessful. Code: " << error.code() << ' ' << error.what();
+        std::cerr << "Connection unsuccessful. Code: " << error.code() << ' ' << error.what() << '\n';
         throw error;
     }
 }
@@ -82,11 +66,11 @@ void RemoteGamepad::Client::syncWithRemote()
 
     if (!localState)
     {
-        std::cerr << "Sync failed: couldn't capture local gamepad state.";
+        std::cerr << "Sync failed: couldn't capture local gamepad state.\n";
         return;
     }
 
-    const auto dataToSend = serializeGamepadState(*localState);
+    const auto dataToSend = RemoteGamepad::serializeGamepadState(*localState);
 
     boost::system::error_code error;
 
@@ -94,7 +78,7 @@ void RemoteGamepad::Client::syncWithRemote()
 
     if (error.failed())
     {
-        std::cerr << "Error: coudn't write a message into a socket. Error code: " << error.value() << ", message: " << error.message();
+        std::cerr << "Error: coudn't write a message into a socket. Error code: " << error.value() << ", message: " << error.message() << '\n';
         return;
     }
 }

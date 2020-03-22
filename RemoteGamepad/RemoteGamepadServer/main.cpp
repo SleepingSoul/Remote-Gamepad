@@ -1,5 +1,5 @@
 #include <utils.h>
-#include "RemoteGamepadClient.h"
+#include "RemoteGamepadServer.h"
 
 int main()
 {
@@ -13,23 +13,17 @@ int main()
         return 0;
     }
 
-    const auto addr = RemoteGamepad::readFromConfig<std::string>(*config, RemoteGamepad::ConfigFields::RemoteAddress);
     const auto port = RemoteGamepad::readFromConfig<unsigned short>(*config, RemoteGamepad::ConfigFields::RemotePort);
 
-    if (!addr || !port)
+    if (!port)
     {
         std::cerr << "Cannot connect to the remote machine because not all parameters were provided in config.\n";
         return 0;
     }
 
-    RemoteGamepad::Client client(*addr, *port);
+    RemoteGamepad::Server server(*port);
 
-    while (true)
-    {
-        client.syncWithRemote();
-
-        RemoteGamepad::waitNextFrame();
-    }
+    server.receive();
 
     return 0;
 }
