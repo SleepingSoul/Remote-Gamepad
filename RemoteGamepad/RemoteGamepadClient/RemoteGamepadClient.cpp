@@ -45,12 +45,13 @@ RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned 
     if (error.failed())
     {
         std::cerr << "Error: couldn't resolve DNS name: " << remoteMachineAddress << ", error code: " << error.value()
-            << ", message: " << error.message();
+            << ", message: " << error.message() << '\n';
         throw error;
     }
 
     try
     {
+        std::cout << "Attempting to connect to the server with IP: " << it->endpoint().address().to_string() << '\n';
         m_socket.connect(it->endpoint());
     }
     catch (const boost::system::system_error& error)

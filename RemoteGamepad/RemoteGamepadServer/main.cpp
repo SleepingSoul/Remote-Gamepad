@@ -3,7 +3,7 @@
 
 int main()
 {
-    std::cout << RemoteGamepad::ProgramGreetingHeader << "\nReading config file...\n";
+    std::cout << "RemoteGamepadServer (c) by Tihran Katolikian\n" << "\nReading config file...\n";
 
     const auto config = RemoteGamepad::readConfigFile();
 

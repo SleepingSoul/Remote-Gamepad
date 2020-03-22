@@ -14,8 +14,6 @@ namespace RemoteGamepad
 {
     namespace
     {
-        const std::string_view ProgramGreetingHeader = "RemoteGamepadClient (c) by Tihran Katolikian";
-
         const std::string_view ConfigFile = "config.json";
 
         std::optional<nlohmann::json> readConfigFile()
