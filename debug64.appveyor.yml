@@ -10,6 +10,8 @@ install:
 
     call bootstrap-vcpkg.bat
 
+    vcpkg.exe integrate install
+
     vcpkg.exe install boost-asio:x64-windows nlohmann-json:x64-windows
 
     cd ..
