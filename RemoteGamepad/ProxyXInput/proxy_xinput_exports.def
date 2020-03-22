@@ -1,0 +1,6 @@
+EXPORTS
+    XInputGetState=ProxyXInputGetState
+    XInputGetCapabilities
+    XInputGetDSoundAudioDeviceGuids
+    XInputSetState
+    DllMain
