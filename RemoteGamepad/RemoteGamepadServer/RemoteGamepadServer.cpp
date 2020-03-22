@@ -6,13 +6,6 @@
 
 #include <gamepad_state_serializer.h>
 
-namespace
-{
-    void applyGamepadState(const XUSB_REPORT& gamepadState)
-    {
-
-    }
-}
 
 RemoteGamepad::Server::Server(unsigned short port)
     : m_socket(m_IOService)
@@ -35,6 +28,14 @@ RemoteGamepad::Server::Server(unsigned short port)
         std::cerr << "Failed to attach virtual gamepad target. Error code: " << result << '\n';
         throw result;
     }
+}
+
+RemoteGamepad::Server::~Server()
+{
+    vigem_target_remove(m_vigemClient, m_vigemTagret);
+    vigem_target_free(m_vigemTagret);
+
+    vigem_free(m_vigemClient);
 }
 
 void RemoteGamepad::Server::receive()
@@ -69,4 +70,9 @@ void RemoteGamepad::Server::receive()
         std::cerr << "Connection failure: couldn't accept connection. Error code: " << error.code() << ", description: " << error.what() << '\n';
         return;
     }
+}
+
+void RemoteGamepad::Server::applyGamepadState(const XUSB_REPORT& state) const
+{
+    vigem_target_x360_update(m_vigemClient, m_vigemTagret, state);
 }

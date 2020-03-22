@@ -20,8 +20,7 @@ namespace RemoteGamepad
 
 #ifdef _DEBUG
         // Write data in human-readable format.
-        stream << gamepadState.bLeftTrigger << gamepadState.bRightTrigger << gamepadState.sThumbLX << gamepadState.sThumbLY
-            << gamepadState.sThumbRX << gamepadState.sThumbRY << gamepadState.wButtons << '\n';
+        stream.write(reinterpret_cast<const char*>(&gamepadState), sizeof(gamepadState));
 #else
 #error Not implemented
 #endif
@@ -38,8 +37,15 @@ namespace RemoteGamepad
         ss.str(data);
 
 #ifdef _DEBUG
-        ss >> result.bLeftTrigger >> result.bRightTrigger >> result.sThumbLX >> result.sThumbLY
-            >> result.sThumbRX >> result.sThumbRY >> result.wButtons;
+        XINPUT_GAMEPAD gamepadState;
+        ss.read(reinterpret_cast<char*>(&gamepadState), sizeof(gamepadState));
+        result.bLeftTrigger = gamepadState.bLeftTrigger;
+        result.bRightTrigger = gamepadState.bRightTrigger;
+        result.sThumbLX = gamepadState.sThumbLX;
+        result.sThumbLY = gamepadState.sThumbLY;
+        result.sThumbRX = gamepadState.sThumbRX;
+        result.sThumbRY = gamepadState.sThumbRY;
+        result.wButtons = gamepadState.wButtons;
 #else
 #error Not implemented
 #endif
