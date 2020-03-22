@@ -1,6 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg
-[submodule "ViGEmClient"]
-	path = ViGEmClient
+[submodule "external/ViGEmClient"]
+	path = external/ViGEmClient
 	url = https://github.com/ViGEm/ViGEmClient
