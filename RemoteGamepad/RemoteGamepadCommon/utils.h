@@ -49,7 +49,7 @@ namespace RemoteGamepad
 
         void waitNextFrame()
         {
-            const std::chrono::milliseconds FrameDuration(1000);
+            const std::chrono::milliseconds FrameDuration(1);
             std::this_thread::sleep_for(FrameDuration);
         }
 

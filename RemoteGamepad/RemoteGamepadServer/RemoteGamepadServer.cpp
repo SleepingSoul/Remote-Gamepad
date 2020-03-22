@@ -51,11 +51,9 @@ void RemoteGamepad::Server::receive()
             boost::asio::streambuf buffer;
 
 #ifdef _DEBUG
-            boost::asio::read_until(m_socket, buffer, '\n');
+            const auto bytes = boost::asio::read(m_socket, buffer, boost::asio::transfer_exactly(sizeof(XINPUT_GAMEPAD)));
 
-            const std::string packedGamepadState(boost::asio::buffer_cast<const char*>(buffer.data()), buffer.size());
-
-            std::cout << "Received: " << std::ios::binary << boost::asio::buffer_cast<const char*>(buffer.data()) << '\n';
+            const std::string packedGamepadState(boost::asio::buffer_cast<const char*>(buffer.data()), bytes);
 
             const auto gamepadState = deserializeGamepadState(packedGamepadState);
 
