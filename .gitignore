@@ -351,3 +351,4 @@ MigrationBackup/
 
 RemoteGamepad/config.json
 *.exe
+*.lib
