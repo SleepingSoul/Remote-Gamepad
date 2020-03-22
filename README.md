@@ -4,6 +4,7 @@ Remote session gamepad tool.
 
 ### Build status
 [![Build status](https://ci.appveyor.com/api/projects/status/nqs4nd1x97e0xjc1?svg=true)](https://ci.appveyor.com/project/SleepingSoul/remote-gamepad) - Visual Studio 2019 x64 Debug
+
 [![Build status](https://ci.appveyor.com/api/projects/status/nqs4nd1x97e0xjc1?svg=true)](https://ci.appveyor.com/project/SleepingSoul/remote-gamepad) - Visual Studio 2019 x64 Release
 
 ### How it is implemented
