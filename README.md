@@ -1,6 +1,6 @@
 # Remote-Gamepad
 
-A tool for using gamepad for PC remote session.
+Remote session gamepad tool.
 
 ### How it is implemented
 Local machine's gamepad input is being captured through XInput, then being serialized and sent to the remote machine through TCP, and then applied there through the [ViGEmClient API.](https://github.com/ViGEm/ViGEmClient)
