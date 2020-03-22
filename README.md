@@ -2,6 +2,10 @@
 
 Remote session gamepad tool.
 
+### Build status
+[![Build status](https://ci.appveyor.com/api/projects/status/nqs4nd1x97e0xjc1?svg=true)](https://ci.appveyor.com/project/SleepingSoul/remote-gamepad) - Visual Studio 2019 x64 Debug
+[![Build status](https://ci.appveyor.com/api/projects/status/nqs4nd1x97e0xjc1?svg=true)](https://ci.appveyor.com/project/SleepingSoul/remote-gamepad) - Visual Studio 2019 x64 Release
+
 ### How it is implemented
 Local machine's gamepad input is being captured through XInput, then being serialized and sent to the remote machine through TCP, and then applied there through the [ViGEmClient API.](https://github.com/ViGEm/ViGEmClient)
 
