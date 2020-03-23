@@ -116,13 +116,13 @@ void RemoteGamepad::Client::syncWithRemote()
         return;
     }
 
-#ifdef _DEBUG
     if (isGamepadStateZero(localState->Gamepad))
     {
+#ifdef _DEBUG
         std::cout << "Current gamepad state is zero: not sending the data on server.\n";
+#endif
         return;
     }
-#endif
 
     const auto dataToSend = RemoteGamepad::serializeGamepadState(*localState);
 
