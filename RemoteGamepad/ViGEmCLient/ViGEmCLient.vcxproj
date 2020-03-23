@@ -106,7 +106,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(SolutionDir)build_output_d\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>$(SolutionDir)build_output_d/$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>setupapi.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
@@ -143,7 +143,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <OutputFile>$(SolutionDir)build_output_r\$(TargetName)$(TargetExt)</OutputFile>
+      <OutputFile>$(SolutionDir)build_output_r/$(TargetName)$(TargetExt)</OutputFile>
       <AdditionalDependencies>setupapi.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>

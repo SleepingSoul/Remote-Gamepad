@@ -48,7 +48,29 @@ namespace
         return state;
     }
 
-    static const XINPUT_GAMEPAD ZeroInputGamepadState = makeZeroInputState();
+    bool isGamepadStateZero(XINPUT_GAMEPAD state)
+    {
+        static const XINPUT_GAMEPAD zeroInputGamepadState = makeZeroInputState();
+
+        const auto isStickZero = [](float x, float y, float deadZone)
+        {
+            const float magnitude2 = x * x + y * y;
+
+            return magnitude2 < deadZone * deadZone;
+        };
+
+        if (isStickZero(state.sThumbLX, state.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
+        {
+            state.sThumbLX = state.sThumbLY = 0;
+        }
+
+        if (isStickZero(state.sThumbRX, state.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
+        {
+            state.sThumbRX = state.sThumbRY = 0;
+        }
+
+        return state == zeroInputGamepadState;
+    }
 }
 
 RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned short remotePort)
@@ -95,7 +117,7 @@ void RemoteGamepad::Client::syncWithRemote()
     }
 
 #ifdef _DEBUG
-    if (localState->Gamepad == ZeroInputGamepadState)
+    if (isGamepadStateZero(localState->Gamepad))
     {
         std::cout << "Current gamepad state is zero: not sending the data on server.\n";
         return;

@@ -349,8 +349,7 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
-RemoteGamepad/build_output_d/config.json
-RemoteDesktop/build_outpud_r/config.json
+**/config.json
 *.exe
 *.lib
 packages.config
