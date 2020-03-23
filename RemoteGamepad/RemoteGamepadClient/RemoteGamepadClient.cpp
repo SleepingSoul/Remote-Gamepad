@@ -2,10 +2,8 @@
 #include <iostream>
 #include <optional>
 
-#include <Windows.h>
-#include <XInput.h>
-
 #include <gamepad_state_serializer.h>
+
 
 namespace
 {
@@ -76,6 +74,8 @@ namespace
 RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned short remotePort)
     : m_socket(m_IOService)
 {
+    ZeroMemory(&m_lastGamepadState, sizeof(m_lastGamepadState));
+
     using namespace boost::asio;
 
     ip::tcp::resolver::query resolverQuery(remoteMachineAddress, std::to_string(remotePort), ip::tcp::resolver::query::numeric_service);
@@ -116,13 +116,15 @@ void RemoteGamepad::Client::syncWithRemote()
         return;
     }
 
-    if (isGamepadStateZero(localState->Gamepad))
+    if (isGamepadStateZero(localState->Gamepad) && isGamepadStateZero(m_lastGamepadState))
     {
 #ifdef _DEBUG
         std::cout << "Current gamepad state is zero: not sending the data on server.\n";
 #endif
         return;
     }
+
+    m_lastGamepadState = localState->Gamepad;
 
     const auto dataToSend = RemoteGamepad::serializeGamepadState(*localState);
 
