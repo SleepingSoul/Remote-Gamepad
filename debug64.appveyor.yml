@@ -3,7 +3,7 @@ branches:
   only:
   - master
 image: Visual Studio 2019
-configuration: Release
+configuration: Debug
 platform: x64
 install:
 - cmd: >-
