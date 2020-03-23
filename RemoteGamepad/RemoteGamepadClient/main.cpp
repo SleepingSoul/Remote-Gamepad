@@ -1,6 +1,7 @@
 #include <utils.h>
 #include "RemoteGamepadClient.h"
 
+
 int main()
 {
     std::cout << "RemoteGamepadClient (c) by Tihran Katolikian\n" << "\nReading config file...\n";

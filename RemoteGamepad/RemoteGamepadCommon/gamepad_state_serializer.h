@@ -9,6 +9,7 @@
 
 #include <ViGEm/Client.h>
 
+
 namespace RemoteGamepad
 {
     static std::string serializeGamepadState(const XINPUT_STATE& state)
@@ -18,12 +19,8 @@ namespace RemoteGamepad
 
         const auto& gamepadState = state.Gamepad;
 
-#ifdef _DEBUG
-        // Write data in human-readable format.
+        // !TODO: implement consistent serialization.
         stream.write(reinterpret_cast<const char*>(&gamepadState), sizeof(gamepadState));
-#else
-#error Not implemented
-#endif
 
         return stream.str();
     }
@@ -33,12 +30,11 @@ namespace RemoteGamepad
         XUSB_REPORT result;
         XUSB_REPORT_INIT(&result);
 
-        static std::stringstream ss;
-        ss.str(data);
+        static std::stringstream stream;
+        stream.str(data);
 
-#ifdef _DEBUG
         XINPUT_GAMEPAD gamepadState;
-        ss.read(reinterpret_cast<char*>(&gamepadState), sizeof(gamepadState));
+        stream.read(reinterpret_cast<char*>(&gamepadState), sizeof(gamepadState));
         result.bLeftTrigger = gamepadState.bLeftTrigger;
         result.bRightTrigger = gamepadState.bRightTrigger;
         result.sThumbLX = gamepadState.sThumbLX;
@@ -46,9 +42,6 @@ namespace RemoteGamepad
         result.sThumbRX = gamepadState.sThumbRX;
         result.sThumbRY = gamepadState.sThumbRY;
         result.wButtons = gamepadState.wButtons;
-#else
-#error Not implemented
-#endif
 
         return result;
     }

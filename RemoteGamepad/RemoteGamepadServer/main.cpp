@@ -1,6 +1,7 @@
 #include <utils.h>
 #include "RemoteGamepadServer.h"
 
+
 int main()
 {
     std::cout << "RemoteGamepadServer (c) by Tihran Katolikian\n" << "\nReading config file...\n";
@@ -23,6 +24,7 @@ int main()
 
     RemoteGamepad::Server server(*port);
 
+    // Blocking operation: will start receiving the messages from the client.
     server.receive();
 
     return 0;

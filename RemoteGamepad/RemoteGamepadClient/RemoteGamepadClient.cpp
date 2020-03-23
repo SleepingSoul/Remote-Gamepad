@@ -27,6 +27,28 @@ namespace
 
         return std::nullopt;
     }
+
+    static bool operator ==(const XINPUT_GAMEPAD& first, const XINPUT_GAMEPAD& second)
+    {
+        return first.bLeftTrigger == second.bLeftTrigger
+            && first.bRightTrigger == second.bRightTrigger
+            && first.sThumbLX == second.sThumbLX
+            && first.sThumbLY == second.sThumbLY
+            && first.sThumbRX == second.sThumbRX
+            && first.sThumbRY == second.sThumbRY
+            && first.wButtons == second.wButtons;
+    }
+
+    static XINPUT_GAMEPAD makeZeroInputState()
+    {
+        XINPUT_GAMEPAD state;
+
+        ZeroMemory(&state, sizeof(state));
+
+        return state;
+    }
+
+    static const XINPUT_GAMEPAD ZeroInputGamepadState = makeZeroInputState();
 }
 
 RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned short remotePort)
@@ -53,6 +75,7 @@ RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned 
     {
         std::cout << "Attempting to connect to the server with IP: " << it->endpoint().address().to_string() << '\n';
         m_socket.connect(it->endpoint());
+        std::cout << "Succesfully connected to server.\n";
     }
     catch (const boost::system::system_error& error)
     {
@@ -71,7 +94,21 @@ void RemoteGamepad::Client::syncWithRemote()
         return;
     }
 
+#ifdef _DEBUG
+    if (localState->Gamepad == ZeroInputGamepadState)
+    {
+        std::cout << "Current gamepad state is zero: not sending the data on server.\n";
+        return;
+    }
+#endif
+
     const auto dataToSend = RemoteGamepad::serializeGamepadState(*localState);
+
+    if (dataToSend.empty())
+    {
+        std::cout << "Gamepad state is zero: do not send any updates on server.\n";
+        return;
+    }
 
     boost::system::error_code error;
 

@@ -6,6 +6,7 @@
 
 #include <ViGEm/Client.h>
 
+
 namespace RemoteGamepad
 {
     class Server

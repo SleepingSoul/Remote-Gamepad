@@ -10,6 +10,7 @@
 
 #include <nlohmann/json.hpp>
 
+
 namespace RemoteGamepad
 {
     namespace
@@ -47,7 +48,7 @@ namespace RemoteGamepad
 
         void waitNextFrame()
         {
-            const std::chrono::milliseconds FrameDuration(1);
+            const std::chrono::milliseconds FrameDuration(30);
             std::this_thread::sleep_for(FrameDuration);
         }
 
