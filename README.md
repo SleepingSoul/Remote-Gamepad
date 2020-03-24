@@ -34,3 +34,4 @@ Local machine's gamepad input is being captured through XInput, then being seria
 - [ViGEmClient API](https://github.com/ViGEm/ViGEmClient)
 - [nlohmann-json](https://github.com/nlohmann/json)
 - [boost-asio](https://github.com/boostorg/asio)
+- [spdlog](https://github.com/gabime/spdlog)
