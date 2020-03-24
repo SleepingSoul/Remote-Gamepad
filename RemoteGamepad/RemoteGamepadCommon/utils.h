@@ -62,6 +62,8 @@ namespace RemoteGamepad
         {
             const std::string_view RemoteAddress = "remote_address";
             const std::string_view RemotePort = "remote_port";
+            const std::string_view LeftThumbDeadzone = "left_thumb_deadzone";
+            const std::string_view RightThumbDeadzone = "right_thumb_deadzone";
         }
     }
 }

@@ -22,6 +22,26 @@ int main()
 
     const auto addr = RemoteGamepad::readFromConfig<std::string>(*config, RemoteGamepad::ConfigFields::RemoteAddress);
     const auto port = RemoteGamepad::readFromConfig<unsigned short>(*config, RemoteGamepad::ConfigFields::RemotePort);
+    
+    RemoteGamepad::Client::GamepadUserConfiguration userConfiguration;
+
+    if (const auto leftThumbDeadzone = RemoteGamepad::readFromConfig<float>(*config, RemoteGamepad::ConfigFields::LeftThumbDeadzone); leftThumbDeadzone.has_value())
+    {
+        userConfiguration.leftThumbDeadzone = *leftThumbDeadzone;
+    }
+    else
+    {
+        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used.", userConfiguration.leftThumbDeadzone);
+    }
+
+    if (const auto rightThumbDeadzone = RemoteGamepad::readFromConfig<float>(*config, RemoteGamepad::ConfigFields::RightThumbDeadzone); rightThumbDeadzone.has_value())
+    {
+        userConfiguration.rightThumbDeadzone = *rightThumbDeadzone;
+    }
+    else
+    {
+        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used.", userConfiguration.rightThumbDeadzone);
+    }
 
     if (!addr || !port)
     {
@@ -31,7 +51,7 @@ int main()
 
     try
     {
-        RemoteGamepad::Client client(*addr, *port);
+        RemoteGamepad::Client client(*addr, *port, userConfiguration);
 
         client.connectToServer();
 

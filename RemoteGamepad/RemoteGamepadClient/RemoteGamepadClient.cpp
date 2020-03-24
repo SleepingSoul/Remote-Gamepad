@@ -38,43 +38,13 @@ namespace
             && first.sThumbRY == second.sThumbRY
             && first.wButtons == second.wButtons;
     }
-
-    bool isGamepadStateZero(XINPUT_GAMEPAD state)
-    {
-        static const XINPUT_GAMEPAD zeroInputGamepadState = []
-        {
-            XINPUT_GAMEPAD state;
-
-            ZeroMemory(&state, sizeof(state));
-
-            return state;
-        }();
-
-        const auto isStickZero = [](float x, float y, float deadZone)
-        {
-            const float magnitude2 = x * x + y * y;
-
-            return magnitude2 < deadZone * deadZone;
-        };
-
-        if (isStickZero(state.sThumbLX, state.sThumbLY, XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE))
-        {
-            state.sThumbLX = state.sThumbLY = 0;
-        }
-
-        if (isStickZero(state.sThumbRX, state.sThumbRY, XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE))
-        {
-            state.sThumbRX = state.sThumbRY = 0;
-        }
-
-        return state == zeroInputGamepadState;
-    }
 }
 
-RemoteGamepad::Client::Client(std::string remoteMachineAddress, unsigned short remotePort)
+RemoteGamepad::Client::Client(std::string remoteMachineAddress, unsigned short remotePort, GamepadUserConfiguration userConfiguration)
     : m_socket(m_IOService)
     , m_IPAddress(std::move(remoteMachineAddress))
     , m_port(remotePort)
+    , m_userConfiguration(userConfiguration)
 {
     ZeroMemory(&m_lastGamepadState, sizeof(m_lastGamepadState));
 }
@@ -135,10 +105,19 @@ void RemoteGamepad::Client::syncWithRemote()
         return;
     }
 
-    if (isGamepadStateZero(localState->Gamepad) && isGamepadStateZero(m_lastGamepadState))
+    const bool currentGamepadStateIsZero = isGamepadStateZero(localState->Gamepad);
+    const bool prevGamepadStateIsZero = isGamepadStateZero(m_lastGamepadState);
+
+    if (currentGamepadStateIsZero)
     {
-        Logging::StdOut()->debug("Current gamepad state is zero: not sending the data on server.");
-        return;
+        if (prevGamepadStateIsZero)
+        {
+            return;
+        }
+        else
+        {
+            Logging::StdOut()->debug("Gamepad goes into idling state, no updates will be sent.");
+        }
     }
 
     m_lastGamepadState = localState->Gamepad;
@@ -153,4 +132,35 @@ void RemoteGamepad::Client::syncWithRemote()
     {
        Logging::StdErr()->error("Coudn't write a message into a socket. Error code: {}, message: {}", error.value(), error.message());
     }
+}
+
+bool RemoteGamepad::Client::isGamepadStateZero(XINPUT_GAMEPAD state) const
+{
+    static const XINPUT_GAMEPAD zeroInputGamepadState = []
+    {
+        XINPUT_GAMEPAD state;
+
+        ZeroMemory(&state, sizeof(state));
+
+        return state;
+    }();
+
+    const auto isStickZero = [](float x, float y, float deadZone)
+    {
+        const float magnitude2 = x * x + y * y;
+
+        return magnitude2 < deadZone * deadZone;
+    };
+
+    if (isStickZero(state.sThumbLX, state.sThumbLY, m_userConfiguration.leftThumbDeadzone))
+    {
+        state.sThumbLX = state.sThumbLY = 0;
+    }
+
+    if (isStickZero(state.sThumbRX, state.sThumbRY, m_userConfiguration.rightThumbDeadzone))
+    {
+        state.sThumbRX = state.sThumbRY = 0;
+    }
+
+    return state == zeroInputGamepadState;
 }

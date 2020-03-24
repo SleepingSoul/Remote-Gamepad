@@ -59,7 +59,7 @@ void RemoteGamepad::Server::connectWithClient()
             .withArgument("error message", error.message());
     }
 
-    Logging::StdOut()->info("Client connected: ", m_socket.remote_endpoint().address().to_string());
+    Logging::StdOut()->info("Client connected: {}", m_socket.remote_endpoint().address().to_string());
 }
 
 void RemoteGamepad::Server::receiveData()
