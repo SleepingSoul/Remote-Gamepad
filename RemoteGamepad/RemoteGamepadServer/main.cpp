@@ -1,6 +1,7 @@
 #include <utils.h>
 #include <Exception.h>
 #include <logging.h>
+#include <StateManager.h>
 #include "RemoteGamepadServer.h"
 
 
@@ -9,6 +10,8 @@ int main()
     std::cout << "RemoteGamepadServer (c) by Tihran Katolikian\n";
 
     RemoteGamepad::Logging::setUpDefaultGlobalLoggers();
+
+    RemoteGamepad::StateManager::instance().setUp();
 
     RemoteGamepad::Logging::StdOut()->info("Reading config file...");
 
@@ -33,10 +36,8 @@ int main()
         RemoteGamepad::Server server(*port);
 
         server.connectWithClient();
-
-        //!TODO: add normal exit condition to be sure all destructors will be called.
-        //!TODO: add exit synchronization.
-        while (true)
+        
+        while (!RemoteGamepad::StateManager::instance().shouldCloseProgram() && server.hasConnection())
         {
             server.receiveData();
         }

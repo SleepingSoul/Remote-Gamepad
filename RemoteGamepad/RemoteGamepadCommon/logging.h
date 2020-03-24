@@ -24,8 +24,8 @@ namespace RemoteGamepad
                 stdoutLogger->set_level(spdlog::level::debug);
                 stderrLogger->set_level(spdlog::level::debug);
 #else
-                stdoutLogger->set_level(spdlog::level::warn);
-                stderrLogger->set_level(spdlog::level::warn);
+                stdoutLogger->set_level(spdlog::level::info);
+                stderrLogger->set_level(spdlog::level::info);
 #endif
             }
 

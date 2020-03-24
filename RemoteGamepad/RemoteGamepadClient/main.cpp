@@ -1,6 +1,7 @@
 #include <utils.h>
 #include <Exception.h>
 #include <logging.h>
+#include <StateManager.h>
 #include "RemoteGamepadClient.h"
 
 
@@ -9,6 +10,8 @@ int main()
     std::cout << "RemoteGamepadClient (c) by Tihran Katolikian\n";
 
     RemoteGamepad::Logging::setUpDefaultGlobalLoggers();
+
+    RemoteGamepad::StateManager::instance().setUp();
 
     RemoteGamepad::Logging::StdOut()->info("Reading config file...");
 
@@ -31,7 +34,8 @@ int main()
     }
     else
     {
-        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used.", userConfiguration.leftThumbDeadzone);
+        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used: {}"
+            , RemoteGamepad::ConfigFields::LeftThumbDeadzone, userConfiguration.leftThumbDeadzone);
     }
 
     if (const auto rightThumbDeadzone = RemoteGamepad::readFromConfig<float>(*config, RemoteGamepad::ConfigFields::RightThumbDeadzone); rightThumbDeadzone.has_value())
@@ -40,7 +44,8 @@ int main()
     }
     else
     {
-        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used.", userConfiguration.rightThumbDeadzone);
+        RemoteGamepad::Logging::StdOut()->warn("No '{}' field provided in config. Default value will be used: {}"
+            , RemoteGamepad::ConfigFields::RightThumbDeadzone, userConfiguration.rightThumbDeadzone);
     }
 
     if (!addr || !port)
@@ -55,14 +60,14 @@ int main()
 
         client.connectToServer();
 
-        //!TODO: add normal exit condition to be sure all destructors will be called.
-        //!TODO: add exit synchronization.
-        while (true)
+        while (!RemoteGamepad::StateManager::instance().shouldCloseProgram())
         {
             client.syncWithRemote();
 
             RemoteGamepad::waitNextFrame();
         }
+
+        client.closeConnection();
     }
     catch (const RemoteGamepad::Exception& error)
     {

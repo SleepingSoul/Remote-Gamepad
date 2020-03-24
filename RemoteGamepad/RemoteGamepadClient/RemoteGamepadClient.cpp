@@ -134,6 +134,23 @@ void RemoteGamepad::Client::syncWithRemote()
     }
 }
 
+void RemoteGamepad::Client::closeConnection()
+{
+    boost::system::error_code error;
+
+    Logging::StdOut()->info("Attempting to close the active connection...");
+    m_socket.close(error);
+
+    if (error.failed())
+    {
+        throw Exception("Error occured when connection was being closed.")
+            .withArgument("error code", error.value())
+            .withArgument("error message", error.message());
+    }
+
+    Logging::StdOut()->info("Active connection succesfully closed.");
+}
+
 bool RemoteGamepad::Client::isGamepadStateZero(XINPUT_GAMEPAD state) const
 {
     static const XINPUT_GAMEPAD zeroInputGamepadState = []

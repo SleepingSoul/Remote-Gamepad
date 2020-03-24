@@ -1,7 +1,5 @@
 #pragma once
 
-#include <future>
-
 #include <boost/asio.hpp>
 
 #include <ViGEm/Client.h>
@@ -17,6 +15,7 @@ namespace RemoteGamepad
 
         void connectWithClient();
         void receiveData();
+        bool hasConnection() const { return m_hasConnection; }
 
     private:
         void applyGamepadState(const XUSB_REPORT& state) const;
@@ -27,5 +26,7 @@ namespace RemoteGamepad
 
         PVIGEM_CLIENT m_vigemClient;
         PVIGEM_TARGET m_vigemTagret;
+
+        bool m_hasConnection;
     };
 }

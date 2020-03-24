@@ -8,6 +8,7 @@
 #include <fstream>
 #include <thread>
 #include <sstream>
+#include <future>
 
 #include <nlohmann/json.hpp>
 
@@ -18,7 +19,7 @@ namespace RemoteGamepad
 
     namespace
     {
-        constexpr VersionType Version = "1.0.1";
+        constexpr VersionType Version = "1.0.3";
 
         const std::string_view ConfigFile = "config.json";
 
@@ -56,6 +57,12 @@ namespace RemoteGamepad
         {
             const std::chrono::milliseconds FrameDuration(30);
             std::this_thread::sleep_for(FrameDuration);
+        }
+
+        template <class TFuture>
+        bool futureReady(const TFuture& future)
+        {
+            return future.wait_for(std::chrono::microseconds(0)) == std::future_status::ready;
         }
 
         namespace ConfigFields

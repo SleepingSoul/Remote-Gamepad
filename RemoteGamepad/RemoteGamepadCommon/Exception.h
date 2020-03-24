@@ -4,7 +4,7 @@
 #include <string_view>
 #include <sstream>
 
-#include <spdlog/fmt/ostr.h>bin_to_hex.h
+#include <spdlog/fmt/ostr.h>
 
 
 namespace RemoteGamepad
@@ -28,7 +28,7 @@ namespace RemoteGamepad
             return std::move(*this);
         }
 
-        template<typename TOStream>
+        template <typename TOStream>
         friend TOStream& operator <<(TOStream& stream, const Exception& exception)
         {
             stream << exception.m_info.str();

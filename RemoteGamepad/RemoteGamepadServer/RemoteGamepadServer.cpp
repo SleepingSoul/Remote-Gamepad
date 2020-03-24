@@ -15,6 +15,7 @@ try:
     , m_acceptor(m_IOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
     , m_vigemClient(vigem_alloc())
     , m_vigemTagret(vigem_target_x360_alloc())
+    , m_hasConnection(false)
 {
     VIGEM_ERROR result = vigem_connect(m_vigemClient);
 
@@ -60,6 +61,7 @@ void RemoteGamepad::Server::connectWithClient()
     }
 
     Logging::StdOut()->info("Client connected: {}", m_socket.remote_endpoint().address().to_string());
+    m_hasConnection = true;
 }
 
 void RemoteGamepad::Server::receiveData()
@@ -71,7 +73,16 @@ void RemoteGamepad::Server::receiveData()
 
     if (error.failed())
     {
-        Logging::StdErr()->error("Socket read operation failed. Error code: {}, error message: {}", error.value(), error.message());
+        if (error == boost::asio::error::connection_reset || error == boost::asio::error::eof)
+        {
+            Logging::StdOut()->info("Client disconnected.");
+        }
+        else
+        {
+            Logging::StdErr()->error("Socket read operation failed. Error code: {}, error message: {}", error.value(), error.message());
+        }
+
+        m_hasConnection = false;
         return;
     }
 

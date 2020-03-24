@@ -22,8 +22,8 @@ namespace RemoteGamepad
         Client(std::string remoteMachineAddress, unsigned short remotePort, GamepadUserConfiguration userConfiguration);
 
         void connectToServer();
-
         void syncWithRemote();
+        void closeConnection();
 
     private:
         bool isGamepadStateZero(XINPUT_GAMEPAD state) const;
