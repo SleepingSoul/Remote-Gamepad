@@ -15,7 +15,7 @@ install:
 
     vcpkg.exe integrate install
 
-    vcpkg.exe install boost-asio:x64-windows nlohmann-json:x64-windows
+    vcpkg.exe install boost-asio:x64-windows nlohmann-json:x64-windows spdlog:x64-windows
 
     cd ..
 clone_script:

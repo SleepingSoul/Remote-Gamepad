@@ -3,6 +3,8 @@
 #include <optional>
 
 #include <gamepad_state_serializer.h>
+#include <logging.h>
+#include <Exception.h>
 
 
 namespace
@@ -26,7 +28,7 @@ namespace
         return std::nullopt;
     }
 
-    static bool operator ==(const XINPUT_GAMEPAD& first, const XINPUT_GAMEPAD& second)
+    bool operator ==(const XINPUT_GAMEPAD& first, const XINPUT_GAMEPAD& second)
     {
         return first.bLeftTrigger == second.bLeftTrigger
             && first.bRightTrigger == second.bRightTrigger
@@ -37,18 +39,16 @@ namespace
             && first.wButtons == second.wButtons;
     }
 
-    static XINPUT_GAMEPAD makeZeroInputState()
-    {
-        XINPUT_GAMEPAD state;
-
-        ZeroMemory(&state, sizeof(state));
-
-        return state;
-    }
-
     bool isGamepadStateZero(XINPUT_GAMEPAD state)
     {
-        static const XINPUT_GAMEPAD zeroInputGamepadState = makeZeroInputState();
+        static const XINPUT_GAMEPAD zeroInputGamepadState = []
+        {
+            XINPUT_GAMEPAD state;
+
+            ZeroMemory(&state, sizeof(state));
+
+            return state;
+        }();
 
         const auto isStickZero = [](float x, float y, float deadZone)
         {
@@ -71,14 +71,19 @@ namespace
     }
 }
 
-RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned short remotePort)
+RemoteGamepad::Client::Client(std::string remoteMachineAddress, unsigned short remotePort)
     : m_socket(m_IOService)
+    , m_IPAddress(std::move(remoteMachineAddress))
+    , m_port(remotePort)
 {
     ZeroMemory(&m_lastGamepadState, sizeof(m_lastGamepadState));
+}
 
+void RemoteGamepad::Client::connectToServer()
+{
     using namespace boost::asio;
 
-    ip::tcp::resolver::query resolverQuery(remoteMachineAddress, std::to_string(remotePort), ip::tcp::resolver::query::numeric_service);
+    ip::tcp::resolver::query resolverQuery(m_IPAddress, std::to_string(m_port), ip::tcp::resolver::query::numeric_service);
 
     ip::tcp::resolver resolver(m_IOService);
 
@@ -88,21 +93,35 @@ RemoteGamepad::Client::Client(const std::string& remoteMachineAddress, unsigned 
 
     if (error.failed())
     {
-        std::cerr << "Error: couldn't resolve DNS name: " << remoteMachineAddress << ", error code: " << error.value()
-            << ", message: " << error.message() << '\n';
-        throw error;
+        throw Exception("Connection to server failed because given IP address coudn't be resolved. Please, check if it is available.")
+            .withArgument("error code", error.value())
+            .withArgument("error message", error.message());
     }
 
-    try
+    Logging::StdOut()->info("Attempting to connect to the server with IP: {}", it->endpoint().address().to_string());
+    m_socket.connect(it->endpoint(), error);
+
+    if (error.failed())
     {
-        std::cout << "Attempting to connect to the server with IP: " << it->endpoint().address().to_string() << '\n';
-        m_socket.connect(it->endpoint());
-        std::cout << "Succesfully connected to server.\n";
+        throw Exception("Connection unsuccsessful.")
+            .withArgument("error code", error.value())
+            .withArgument("error message", error.message());
     }
-    catch (const boost::system::system_error& error)
+
+    Logging::StdOut()->info("Succesfully connected to server.");
+
+    // Set keep alive option to always be sure out impul will reach the server, even if gamepad is idling for a long time.
+    const boost::asio::socket_base::keep_alive keepAliveOption(true);
+    m_socket.set_option(keepAliveOption, error);
+
+    if (error.failed())
     {
-        std::cerr << "Connection unsuccessful. Code: " << error.code() << ' ' << error.what() << '\n';
-        throw error;
+        Logging::StdErr()->error("Couldn't set 'keep alive' option. The connection may be interrupted in future. Error code: {}, error message: {}"
+            , error.value(), error.message());
+    }
+    else
+    {
+        Logging::StdOut()->info("Succesfully set 'keep alive' option.");
     }
 }
 
@@ -112,15 +131,13 @@ void RemoteGamepad::Client::syncWithRemote()
 
     if (!localState)
     {
-        std::cerr << "Sync failed: couldn't capture local gamepad state.\n";
+        Logging::StdErr()->warn("Couldn't capture local gamepad state.");
         return;
     }
 
     if (isGamepadStateZero(localState->Gamepad) && isGamepadStateZero(m_lastGamepadState))
     {
-#ifdef _DEBUG
-        std::cout << "Current gamepad state is zero: not sending the data on server.\n";
-#endif
+        Logging::StdOut()->debug("Current gamepad state is zero: not sending the data on server.");
         return;
     }
 
@@ -128,19 +145,12 @@ void RemoteGamepad::Client::syncWithRemote()
 
     const auto dataToSend = RemoteGamepad::serializeGamepadState(*localState);
 
-    if (dataToSend.empty())
-    {
-        std::cout << "Gamepad state is zero: do not send any updates on server.\n";
-        return;
-    }
-
     boost::system::error_code error;
 
     boost::asio::write(m_socket, boost::asio::buffer(dataToSend), error);
 
     if (error.failed())
     {
-        std::cerr << "Error: coudn't write a message into a socket. Error code: " << error.value() << ", message: " << error.message() << '\n';
-        return;
+       Logging::StdErr()->error("Coudn't write a message into a socket. Error code: {}, message: {}", error.value(), error.message());
     }
 }

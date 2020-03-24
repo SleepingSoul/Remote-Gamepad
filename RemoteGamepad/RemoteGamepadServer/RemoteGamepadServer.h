@@ -15,7 +15,8 @@ namespace RemoteGamepad
         Server(unsigned short port);
         ~Server();
 
-        void receive();
+        void connectWithClient();
+        void receiveData();
 
     private:
         void applyGamepadState(const XUSB_REPORT& state) const;

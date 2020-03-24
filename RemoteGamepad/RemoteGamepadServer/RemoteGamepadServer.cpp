@@ -5,29 +5,36 @@
 #include <ViGEm/Client.h>
 
 #include <gamepad_state_serializer.h>
+#include <logging.h>
+#include <Exception.h>
 
 
 RemoteGamepad::Server::Server(unsigned short port)
-    : m_socket(m_IOService)
+try:
+      m_socket(m_IOService)
     , m_acceptor(m_IOService, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), port))
     , m_vigemClient(vigem_alloc())
     , m_vigemTagret(vigem_target_x360_alloc())
 {
-    auto result = vigem_connect(m_vigemClient);
+    VIGEM_ERROR result = vigem_connect(m_vigemClient);
 
     if (result != VIGEM_ERROR_NONE)
     {
-        std::cerr << "Failed to connect to the virtual gamepad. Are you sure you have installed the driver? Error code: " << result << '\n';
-        throw result;
+        throw Exception("Failed to connect virtual gamepad.")
+            .withArgument("error code", result);
     }
 
     result = vigem_target_add(m_vigemClient, m_vigemTagret);
 
     if (result != VIGEM_ERROR_NONE)
     {
-        std::cerr << "Failed to attach virtual gamepad target. Error code: " << result << '\n';
-        throw result;
+        throw Exception("Failed to attach the virtual gamepad target.")
+            .withArgument("error code", result);
     }
+}
+catch (const boost::system::system_error& error)
+{
+    throw Exception("Server init error.").withArgument("error text", error.what());
 }
 
 RemoteGamepad::Server::~Server()
@@ -38,32 +45,41 @@ RemoteGamepad::Server::~Server()
     vigem_free(m_vigemClient);
 }
 
-void RemoteGamepad::Server::receive()
+void RemoteGamepad::Server::connectWithClient()
 {
-    try
+    boost::system::error_code error;
+
+    Logging::StdOut()->info("Waiting for connection...");
+    m_acceptor.accept(m_socket, error);
+
+    if (error.failed())
     {
-        std::cout << "Waiting for connection...\n";
-        m_acceptor.accept(m_socket);
-        std::cout << "Client connected: " << m_socket.remote_endpoint().address().to_string() << '\n';
-
-        while (true)
-        {
-            boost::asio::streambuf buffer;
-
-            const auto bytes = boost::asio::read(m_socket, buffer, boost::asio::transfer_exactly(sizeof(XINPUT_GAMEPAD)));
-
-            const std::string packedGamepadState(boost::asio::buffer_cast<const char*>(buffer.data()), bytes);
-
-            const auto gamepadState = deserializeGamepadState(packedGamepadState);
-
-            applyGamepadState(gamepadState);
-        }
+        throw Exception("Couldn't accept the connection.")
+            .withArgument("error code", error.value())
+            .withArgument("error message", error.message());
     }
-    catch (const boost::system::system_error& error)
+
+    Logging::StdOut()->info("Client connected: ", m_socket.remote_endpoint().address().to_string());
+}
+
+void RemoteGamepad::Server::receiveData()
+{
+    boost::asio::streambuf buffer;
+    boost::system::error_code error;
+
+    const auto bytes = boost::asio::read(m_socket, buffer, boost::asio::transfer_exactly(sizeof(XINPUT_GAMEPAD)), error);
+
+    if (error.failed())
     {
-        std::cerr << "Connection failure: couldn't accept connection. Error code: " << error.code() << ", description: " << error.what() << '\n';
+        Logging::StdErr()->error("Socket read operation failed. Error code: {}, error message: {}", error.value(), error.message());
         return;
     }
+
+    const std::string packedGamepadState(boost::asio::buffer_cast<const char*>(buffer.data()), bytes);
+
+    const auto gamepadState = deserializeGamepadState(packedGamepadState);
+
+    applyGamepadState(gamepadState);
 }
 
 void RemoteGamepad::Server::applyGamepadState(const XUSB_REPORT& state) const

@@ -1,16 +1,22 @@
 #include <utils.h>
+#include <Exception.h>
+#include <logging.h>
 #include "RemoteGamepadServer.h"
 
 
 int main()
 {
-    std::cout << "RemoteGamepadServer (c) by Tihran Katolikian\n" << "\nReading config file...\n";
+    std::cout << "RemoteGamepadServer (c) by Tihran Katolikian\n";
+
+    RemoteGamepad::Logging::setUpDefaultGlobalLoggers();
+
+    RemoteGamepad::Logging::StdOut()->info("Reading config file...");
 
     const auto config = RemoteGamepad::readConfigFile();
 
     if (!config)
     {
-        std::cerr << "No config file found.\n";
+        RemoteGamepad::Logging::StdErr()->critical("No config file found.");
         return 0;
     }
 
@@ -18,14 +24,30 @@ int main()
 
     if (!port)
     {
-        std::cerr << "Cannot connect to the remote machine because not all parameters were provided in config.\n";
+        RemoteGamepad::Logging::StdErr()->critical("Cannot connect to the remote machine because not all parameters were provided in config.");
         return 0;
     }
 
-    RemoteGamepad::Server server(*port);
+    try
+    {
+        RemoteGamepad::Server server(*port);
 
-    // Blocking operation: will start receiving the messages from the client.
-    server.receive();
+        server.connectWithClient();
+
+        //!TODO: add normal exit condition to be sure all destructors will be called.
+        //!TODO: add exit synchronization.
+        while (true)
+        {
+            server.receiveData();
+        }
+    }
+    catch (const RemoteGamepad::Exception& error)
+    {
+        RemoteGamepad::Logging::StdErr()->critical(error);
+    }
+
+    std::cout << "Press any key to leave.";
+    std::getchar();
 
     return 0;
 }

@@ -7,15 +7,21 @@
 #include <optional>
 #include <fstream>
 #include <thread>
+#include <sstream>
 
 #include <nlohmann/json.hpp>
 
 
 namespace RemoteGamepad
 {
+    using VersionType = std::string_view;
+
     namespace
     {
+        constexpr VersionType Version = "1.0.1";
+
         const std::string_view ConfigFile = "config.json";
+
 
         std::optional<nlohmann::json> readConfigFile()
         {

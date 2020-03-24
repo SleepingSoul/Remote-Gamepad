@@ -351,4 +351,5 @@ MigrationBackup/
 
 *.exe
 *.lib
+*.dll
 packages.config

@@ -143,6 +143,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Exception.h" />
+    <ClInclude Include="logging.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="gamepad_state_serializer.h" />
   </ItemGroup>
