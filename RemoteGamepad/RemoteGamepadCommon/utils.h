@@ -19,7 +19,7 @@ namespace RemoteGamepad
 
     namespace
     {
-        constexpr VersionType Version = "1.0.3";
+        constexpr VersionType Version = "1.0.2";
 
         const std::string_view ConfigFile = "config.json";
 
