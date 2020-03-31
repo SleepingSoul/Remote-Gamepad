@@ -25,7 +25,7 @@ Local machine's gamepad input is being captured through XInput, then being seria
 ### How to set up the solution
 - clone repository with all submodules
 - go to vcpkg, run "boostrap-vcpkg.bat" to install the Microsoft Package Manager.
-- now, using vcpkg, install "nlohmann-json:x64-windows" and "boost-asio:x64-windows".
+- now, using vcpkg, install "nlohmann-json:x64-windows", "boost-asio:x64-windows", "spdlog:x64-windows".
 - run "vcpkg integrate project" command and follow the instructions. Don't forget to install the package for all projects in solution (you will have to run this command 3 times).
 - compile and link.
 
