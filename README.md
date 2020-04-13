@@ -1,6 +1,7 @@
 # Remote-Gamepad
 
 Remote session gamepad tool.
+Windows 10 Pro version supports RemoteFX (RDP feature) that can connect the gamepad with the remote machine, but unfortunately, the Windows Home version doesn't have it. In this case - you use this program :)
 
 ### Build status
 [![Build status](https://ci.appveyor.com/api/projects/status/nqs4nd1x97e0xjc1?svg=true)](https://ci.appveyor.com/project/SleepingSoul/remote-gamepad) - Visual Studio 2019 x64 Debug
